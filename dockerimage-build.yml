@@ -1,0 +1,72 @@
+---
+
+- name: "Building Docker Image"
+  hosts: build
+  become: true
+  vars:
+    git_url: "https://github.com/Ismailpb/Docker_nodejs.git"
+    docker_user: "abab"
+    docker_password: "xyxyxyxy"
+    image: "ismailpb/nodejs-app"
+  tasks:
+
+    - name: "Package Installation"
+      yum:
+        name:
+          - docker
+          - git
+          - python2-pip
+        state: present
+
+
+    - name: "Enabling/Restarting Service"
+      service:
+        name: docker
+        state: restarted
+        enabled: true
+
+
+    - name: "Installing Docker-client for python"
+      pip:
+        name: docker-py
+        state: present
+
+
+    - name: "Cloning  github repository"
+      git:
+        repo: "{{ git_url }}"
+        dest: "/var/nodejs/"
+
+      register: git_status
+
+
+    - name: "Login to Docker Hub"
+      when: git_status.changed == true
+      docker_login:
+        username: "{{ docker_user }}"
+        password: "{{ docker_password }}"
+
+
+    - name: "Building Docker Image"
+      when: git_status.changed == true
+      docker_image:
+        build:
+          path: "/var/nodejs"
+        name: "{{ image }}"
+        tag: "{{ item }}"
+        push: yes
+        source: build
+      with_items:
+        - "latest"
+        - "{{ git_status.after }}"
+
+
+    - name: "Removing Docker Image from Build"
+      when: git_status.changed == true
+      docker_image:
+        name: "{{ image }}"
+        tag: "{{ item }}"
+        state: absent
+      with_items:
+        - "latest"
+        - "{{ git_status.after }}"

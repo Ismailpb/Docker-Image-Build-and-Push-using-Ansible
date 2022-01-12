@@ -134,7 +134,15 @@ Once the above process completed, we can run the playbook using the command
 
 ```
 ansible-playbook -i hosts dockerimage-build.yml
+```
 
+![image](https://github.com/Ismailpb/Docker-Image-Build-and-Push-using-Ansible/blob/d0c261fafe7000891c47b34261d17db289e304f0/Screenshot%20from%202022-01-12%2008-03-23.png)
+
+## Conclusion
+
+The Image that we build have been updated in the Dockerhub.
+
+![image](https://github.com/Ismailpb/Docker-Image-Build-and-Push-using-Ansible/blob/d0c261fafe7000891c47b34261d17db289e304f0/Screenshot%20from%202022-01-12%2008-00-37.png)
 
 
 
